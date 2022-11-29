@@ -1,22 +1,15 @@
 from django.shortcuts import render
 from django.views.generic import ListView
-from models import Bulletin
+from django.views.generic.base import View, TemplateView
+
+from .models import Bulletin
 
 
-def home(request):
-    context = {
-        'bulletins': Bulletin.objects.all()
-    }
-    return render(request, 'bulletin_board/home.html', context)
+class BulletinListView(View):
+    """Список объявлений"""
 
-
-class BulletinListView(ListView):
-    model = Bulletin
-    ordering = '-created_at'
-    template_name = 'bulletin_board/home.html'
-    context_object_name = 'bulletins_0'
-    paginate_by = 2
-
-
+    def get(self, request):
+        bulletins = Bulletin.objects.all()
+        return render(request, "bulletins/bulletin_list.html", {"bulletin_list": bulletins})
 
 
