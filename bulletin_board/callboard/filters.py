@@ -1,6 +1,6 @@
 from django.forms import DateInput
 from django_filters import FilterSet, CharFilter, DateFilter, ModelChoiceFilter
-from .models import Bulletin
+from .models import Bulletin, Reply
 
 
 # создаём фильтр
@@ -29,3 +29,9 @@ class BulletinFilter(FilterSet):
     class Meta:
         model = Bulletin
         fields = []
+
+
+class ReplyFilter(FilterSet):
+    class Meta:
+        model = Reply
+        fields = ('bulletin',)

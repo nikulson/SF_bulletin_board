@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from django.shortcuts import render
-from django.views.generic import ListView
+from django.contrib.auth.models import User
+from django.shortcuts import render, get_object_or_404
+from django.views.generic import ListView, DetailView
 from django.views.generic.base import View, TemplateView
 
 from .filters import BulletinFilter
@@ -9,12 +10,11 @@ from .forms import BulletinForm
 from .models import Bulletin, Category
 
 
-# class BulletinListView(View):
-#     """Список объявлений"""
-#
-#     def get(self, request):
-#         bulletins = Bulletin.objects.all()
-#         return render(request, "bulletins/bulletin_list.html", {"bulletin_list": bulletins})
+def home(request):
+    context = {
+        'bulletins': Bulletin.objects.all()
+    }
+    return render(request, 'bulletins/home.html', context)
 
 class BulletinListView(ListView):
     model = Bulletin
@@ -23,7 +23,7 @@ class BulletinListView(ListView):
     context_object_name = 'bulletin_list'
     ordering = ['-created_at']
     paginate_by = 2
-    
+
     def get_queryset(self):
         queryset = super().get_queryset()
         self.filterset = BulletinFilter(self.request.GET, queryset)
@@ -39,6 +39,24 @@ class BulletinListView(ListView):
         context['form'] = BulletinForm()
         context['filterset'] = self.filterset
         return context
+
+
+class UserBulletinListView(ListView):
+    model = Bulletin
+    template_name = 'bulletins/user_bulletins.html'
+    context_object_name = 'bulletin_list'
+    ordering = ['-created_at']
+    paginate_by = 2
+
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return Bulletin.objects.filter(author=user).order_by('-created_at')
+
+
+class BulletinDetail(DetailView):
+    model = Bulletin
+
+
 
 
 
