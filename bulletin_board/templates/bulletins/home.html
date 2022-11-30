@@ -18,10 +18,12 @@
              <div class="col-sm">
                  <div class="card border-secondary mb-3" style="max-width: 20rem;">
                      <h4 class="card-header">{{bulletin.title}}</h4>
+
                      <div class="card-body">
                        <div class="card-title">Автор: {{bulletin.author}}</div>
-                       <p class="card-text">{{post.body|truncatechars:1200}} </p>
+                       <p class="card-text">{{post.body|truncatechars:45}} </p>
                          <p class="card-text">Дата публикации: {{bulletin.created_at}} </p>
+
                      </div>
                    </div>
              </div>

@@ -31,19 +31,19 @@
                     <hr>
                     <h4>Comments...</h4>
                     <br/>
-                    <!-- "comments" -- is a related name of Comment model's bulletin field which connects to Bulletin model via ForeignKey -->
-                    {% if not bulletin.comments.all %}
-                        No Comments Yet...<a href="{% url 'comment_create' bulletin.pk %}">Add One</a>
+                    <!-- "replies" -- is a related name of Reply model's bulletin field which connects to Bulletin model via ForeignKey -->
+                    {% if not bulletin.replies.all %}
+                        No Replies Yet...<a href="{% url 'comment_create' bulletin.pk %}">Add One</a>
                     {% else %}
                     <a href="{% url 'comment_create' bulletin.pk %}">Add Comment</a>
                     <br/><br/>
-                        {% for comment in bulletin.comments.all %}
+                        {% for comment in bulletin.replies.all %}
                             <strong>
-                                {{ comment.username }} -
-                                {{ comment.date_added }}
+                                {{ reply.username }} -
+                                {{ reply.created_at }}
                             </strong>
                             <br/>
-                            {{ comment.body }}
+                            {{ reply.body }}
                             <br/><br/>
                         {% endfor %}
                         <a href="{% url 'comment_create' bulletin.pk %}">Add Comment</a>
