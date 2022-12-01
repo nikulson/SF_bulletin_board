@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -27,18 +26,21 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
+    'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django_filters',
 
     'callboard',
+    'users',
 
 ]
 
@@ -65,13 +67,14 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                    # `allauth` needs this from django
+                'django.template.context_processors.request'
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'bulletin_board.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -82,7 +85,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -102,7 +104,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -113,7 +114,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -128,3 +128,66 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# pip install django-crispy-forms
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# authorisation/authentification
+
+# allauth application
+INSTALLED_APPS += [
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+]
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# redirect authenticated users to LOGIN_REDIRECT_URL if True
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+# redirect user to a home page after logging in
+LOGIN_REDIRECT_URL = 'home'
+
+ACCOUNT_AUTHENTIFICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+# True позволит избежать дополнительных действий и активирует аккаунт сразу, как только мы перейдем по ссылке
+# False попросит подтвердить ещё раз на сайте после прохождения по ссылке
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+
+# подтверждение аккаунта через письмо на почту
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+ACCOUNT_UNIQUE_EMAIL = True
+
+# тема письма для подтверждения регистрации
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "From Evgeniy with regards. "
+# поле username необязательно
+ACCOUNT_USERNAME_REQUIRED = False
+
+# количество дней, в течение которых будет доступна ссылка на подтверждение регистрации
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'profile'
+# чтобы allauth выполнил именно эту форму при регистрации пользователя,
+# а не ту, что по умолчанию, напишем:
+ACCOUNT_FORMS = {'/accounts/signup': 'users.forms.UserUpdateForm'}
+
+# a user will get confirmation e-mails from the following adress
+DEFAULT_FROM_EMAIL = 'nikulshinsf@yandex.ru'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'nikulshinsf'
+EMAIL_HOST_PASSWORD = 'Skillfactory'
+EMAIL_USE_SSL = True
+
+# если пользователь вышел, его перенаправит на страницу:
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+# redirect user to a login page if he wants to access to a login required page
+LOGIN_URL = '/accounts/login/'  # url pattern name
